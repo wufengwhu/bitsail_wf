@@ -1,0 +1,101 @@
+{
+  "bitsail": {
+    "job": {
+      "common": {
+        "job_type": "STREAMING",
+        "job_plugin_lib_dir": "",
+        "job_name": "kafka_to_hdfs_push_id",
+        "enable_dynamic_loader": false,
+        "job_plugin_conf_dir": "",
+        "job_id": 20,
+        "sync_ddl": false,
+        "dry_run": true,
+        "checkpoint_enable": true,
+        "checkpoint_interval": 300000,
+        "multi_source_enable": true,
+        "has_transform": true,
+        "same_transform": true,
+        "has_lookup": false
+      },
+      "reader": {
+        "format_type": "streaming_file",
+        "reader_conf_list": [
+          {
+            "job.reader.connector": {
+              "connector": {
+                "auto": {
+                  "offset": {
+                    "reset": "latest"
+                  }
+                },
+                "topic": "t_realtime_data_id_collector_input",
+                "startup-mode": "latest-offset",
+                "bootstrap": {
+                  "servers": "10.68.78.112:9092,10.68.76.158:9092,10.68.79.27:9092,10.68.76.5:9092,10.68.78.64:9092"
+                },
+                "group": {
+                  "id": "data_collector_real_time"
+                },
+                "source": {
+                  "index": 1
+                }
+              }
+            },
+            "job.reader.class": "com.bytedance.bitsail.connector.legacy.kafka.source.KafkaSourceFunctionDAGBuilder",
+            "job.reader.transformer_class": "com.hihonor.datacollector.realtime.transform.DecryptTransformDAGBuilder",
+            "job.reader.is_decrypt": true,
+            "job.reader.reader_parallelism_num": 15
+          },
+          {
+            "job.reader.connector": {
+              "connector": {
+                "auto": {
+                  "offset": {
+                    "reset": "latest"
+                  }
+                },
+                "topic": "t_realtime_push_data_collector_input",
+                "startup-mode": "latest-offset",
+                "bootstrap": {
+                  "servers": "10.68.78.112:9092,10.68.76.158:9092,10.68.79.27:9092,10.68.76.5:9092,10.68.78.64:9092"
+                },
+                "group": {
+                  "id": "data_collector_real_time"
+                },
+                "source": {
+                  "index": 2
+                }
+              }
+            },
+            "job.reader.class": "com.bytedance.bitsail.connector.legacy.kafka.source.KafkaSourceFunctionDAGBuilder",
+            "job.reader.transformer_class": "com.hihonor.datacollector.realtime.transform.DecryptTransformDAGBuilder",
+            "job.reader.is_decrypt": true,
+            "job.reader.reader_parallelism_num": 15
+          }
+        ],
+        "metric_tag_name": "kafka",
+        "class": "com.bytedance.bitsail.connector.legacy.kafka.source.KafkaSourceFunctionDAGBuilder"
+      },
+      "writer": {
+        "hdfs": {
+          "replication": 1,
+          "dump_type": "hdfs.dump_type.text",
+          "compression_codec": "None"
+        },
+        "dump": {
+          "output_dir": "obs://mrs-honor-bigdata-prod/user/dmp_dwi_clouddt/dwb_tmp/streaming_file_hdfs/realtime_input_src",
+          "format": {
+            "type": "hdfs"
+          },
+          "directory_frequency": "dump.directory_frequency.hour"
+        },
+        "class": "com.bytedance.bitsail.connector.legacy.streamingfile.sink.FileSystemSinkFunctionDAGBuilder",
+        "partition_infos": "[{\"name\":\"tb\",\"type\":\"DYNAMIC\"},{\"name\":\"pt_d\",\"type\":\"TIME\"},{\"name\":\"pt_h\",\"type\":\"TIME\"}]",
+        "enable_event_time": true,
+        "mq_offset_check": false,
+        "custom_extractor_classpath": "com.bytedance.bitsail.connector.legacy.streamingfile.common.extractor.DataCollectorEncryptEventTimeExtractor",
+        "event_time_index": 2
+      }
+    }
+  }
+}

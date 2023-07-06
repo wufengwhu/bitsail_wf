@@ -1,0 +1,18 @@
+{
+  "tableInfos": {
+    "inputPath": "obs://mrs-honor-bigdata-prod/user/hive/warehouse/dwi_clouddt.db/ods_hasdk_event_part4_hm",
+    "outputPath": "obs://mrs-honor-bigdata-prod/user/dmp_dwi_clouddt/dwb_tmp/repair_event_new",
+    "tablesInformation": [
+      {
+        "filterFieldName": "events.event",
+        "tableName": "dwb_hasdk_event_inc_h",
+        "filterFactor": "$AppOnPause,$AppOnResume",
+        "isPublic": "true",
+        "saving": "false",
+        "fieldList": "key,appid,hmac,report_time,imei,androidid_id,uuid,udid,oaid,serviceid,appver,channel,emuiver,libver,mcc,mnc,model,packagename,romver,event,eventtime,type,os,osver,screenheight,screenwidth,properties,client_ip_addr,sdk_name,up_id,adv_switch_open_sign,sn_code,evt_global_pub_attr,req_id,service_tag_name,visit_id,device_id,device_id_type_cd,server_time,evt_session_name,first_session_evt_sign,event_value,evt_os_language,hw_mobile_customize_ver,launch_type,launch_command,brand,manufacturer",
+        "jsonLocationList": "header.key,header.appid,header.hmac,header.timestamp,events_common.imei,events_common.androidid,events_common.uuid,events_common.udid,events_common.oaid,header.serviceid,events_common.properties._app_ver,events_common.properties._channel,events_common.properties._emui_ver,events_common.properties._lib_ver,events_common.properties._mcc,events_common.properties._mnc,events_common.properties._model,events_common.properties._package_name,events_common.properties._rom_ver,events.event,events.eventtime,events.type,events.properties._os,events.properties._os_ver,events.properties._screenheight,events.properties._screenwidth,events.properties,ip,events_common.properties._lib_name,events_common.upid,events_common.properties._oaid_tracking_flag,events_common.sn,events_common.events_global_properties,header.requestid,header.servicetag,events_common.uuid,device_id,device_id_type_cd,time,events.properties.event_session_name,events.properties.first_session_event,events.properties.event,events.properties._sys_language,events.properties._cust_version,events.properties._start_type,events.properties._start_cmd,events_common.properties._brand,events_common.properties._manufacturer",
+        "outPutPath": "obs://mrs-honor-bigdata-prod/user/dmp_dwi_clouddt/dwb_tmp/repair_event_new"
+      }
+    ]
+  }
+}

@@ -1,0 +1,90 @@
+{
+  "bitsail": {
+    "job": {
+      "common": {
+        "job_type": "STREAMING",
+        "job_name": "kafka_redis_asynclookup_to_hdfs",
+        "job_plugin_lib_dir": "",
+        "enable_dynamic_loader": false,
+        "job_plugin_conf_dir": "",
+        "job_id": -1,
+        "sync_ddl": false,
+        "dry_run": true,
+        "checkpoint_enable": true,
+        "checkpoint_interval": 300000,
+        "multi_source_enable": true,
+        "has_transform": true,
+        "same_transform": true,
+        "has_lookup": true
+      },
+      "reader": {
+        "format_type": "streaming_file",
+        "reader_conf_list": [
+          {
+            "job.reader.connector": {
+              "connector": {
+                "auto": {
+                  "offset": {
+                    "reset": "latest"
+                  }
+                },
+                "topic": "t_realtime_sdk_data_decrypt_input",
+                "startup-mode": "latest-offset",
+                "bootstrap": {
+                  "servers": "10.68.78.112:9092,10.68.76.158:9092,10.68.79.27:9092,10.68.76.5:9092,10.68.78.64:9092"
+                },
+                "group": {
+                  "id": "data_collector_real_time"
+                },
+                "source": {
+                  "index": 1
+                }
+              }
+            },
+            "job.reader.class": "com.bytedance.bitsail.connector.legacy.kafka.source.KafkaSourceFunctionDAGBuilder",
+            "job.reader.transformer_class": "com.hihonor.datacollector.realtime.transform.DecryptTransformDAGBuilder",
+            "job.reader.is_decrypt": false,
+            "job.reader.is_unpack": true
+          }
+        ],
+        "metric_tag_name": "kafka",
+        "class": "com.bytedance.bitsail.connector.legacy.kafka.source.KafkaSourceFunctionDAGBuilder"
+      },
+      "lookup": {
+        "type": "redis_async",
+        "connector": {
+          "password": "Vmall@RFVvfr#89",
+          "url": "10.68.166.183:6379,10.68.165.129:6379,10.68.165.187:6379,10.68.164.234:6379,10.68.165.94:6379,10.68.166.218:6379",
+          "data-read-mode": "get",
+          "data-type": "string",
+          "connect-type": 3
+        },
+        "fetch-size": 1000,
+        "cache-ttl": "60 * 1000L",
+        "cache-period": "3600 * 1000L",
+        "async-timeout": 10000,
+        "class": "com.hihonor.datacollector.realtime.lookup.RedisAsyncLookUpDAGBuilder"
+      },
+      "writer": {
+        "hdfs": {
+          "replication": 1,
+          "dump_type": "hdfs.dump_type.text",
+          "compression_codec": "None"
+        },
+        "dump": {
+          "output_dir": "obs://mrs-honor-bigdata-prod/user/dmp_dwi_clouddt/dwb_tmp/streaming_file_hdfs/realtime_input_src",
+          "format": {
+            "type": "hdfs"
+          },
+          "directory_frequency": "dump.directory_frequency.hour"
+        },
+        "class": "com.bytedance.bitsail.connector.legacy.streamingfile.sink.FileSystemSinkFunctionDAGBuilder",
+        "partition_infos": "[{\"name\":\"tb\",\"type\":\"DYNAMIC\"},{\"name\":\"pt_d\",\"type\":\"TIME\"},{\"name\":\"pt_h\",\"type\":\"TIME\"}]",
+        "enable_event_time": true,
+        "mq_offset_check": false,
+        "custom_extractor_classpath": "com.bytedance.bitsail.connector.legacy.streamingfile.common.extractor.DataCollectorDecryptEventTimeExtractor",
+        "event_time_index": 2
+      }
+    }
+  }
+}

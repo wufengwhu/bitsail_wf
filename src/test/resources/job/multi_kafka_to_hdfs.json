@@ -1,0 +1,78 @@
+{
+  "bitsail": {
+    "job": {
+      "common": {
+        "job_type": "STREAMING",
+        "job_plugin_lib_dir": "",
+        "enable_dynamic_loader": false,
+        "job_plugin_conf_dir": "",
+        "job_name": "kafka_to_hdfs_abtest",
+        "job_id": 20,
+        "sync_ddl": false,
+        "dry_run": true,
+        "checkpoint_enable": true,
+        "checkpoint_interval": 300000,
+        "multi_source_enable": true,
+        "has_transform": true,
+        "same_transform": true,
+        "has_lookup": false
+      },
+      "reader": {
+        "format_type": "streaming_file",
+        "reader_conf_list": [
+          {
+            "job.reader.connector": {
+              "connector": {
+                "auto": {
+                  "offset": {
+                    "reset": "latest"
+                  }
+                },
+                "topic": "t_datacollector_realtime_abtest",
+                "startup-mode": "latest-offset",
+                "bootstrap": {
+                  "servers": "10.69.182.64:9092,10.69.180.225:9092,10.69.183.150:9092"
+                },
+                "group": {
+                  "id": "data_collector_real_time"
+                },
+                "source": {
+                  "index": 1
+                }
+              }
+            },
+            "job.reader.class": "com.bytedance.bitsail.connector.legacy.kafka.source.KafkaSourceFunctionDAGBuilder",
+            "job.reader.transformer_class": "com.hihonor.datacollector.realtime.transform.DecryptTransformDAGBuilder",
+            "job.reader.transformer_parallelism": 6,
+            "job.reader.is_decrypt": true,
+            "job.reader.transformer_appid_check": true,
+            "job.reader.reader_parallelism_num": 3
+          }
+        ],
+        "metric_tag_name": "kafka",
+        "class": "com.bytedance.bitsail.connector.legacy.kafka.source.KafkaSourceFunctionDAGBuilder"
+      },
+      "writer": {
+        "hdfs": {
+          "replication": 1,
+          "dump_type": "hdfs.dump_type.text",
+          "compression_codec": "bzip2"
+        },
+        "dump": {
+          "output_dir": "file:///tmp/streaming_file_hdfs/",
+          "format": {
+            "type": "hdfs"
+          },
+          "directory_frequency": "dump.directory_frequency.hour"
+        },
+        "class": "com.bytedance.bitsail.connector.legacy.streamingfile.sink.FileSystemSinkFunctionDAGBuilder",
+        "writer_parallelism_num": 6,
+        "partition_infos": "[{\"name\":\"tb\",\"type\":\"DYNAMIC\"},{\"name\":\"pt_d\",\"type\":\"TIME\"},{\"name\":\"pt_h\",\"type\":\"TIME\"}]",
+        "enable_event_time": true,
+        "mq_offset_check": false,
+        "custom_extractor_classpath": "com.bytedance.bitsail.connector.legacy.streamingfile.common.extractor.DataCollectorEncryptEventTimeExtractor",
+        "event_time_index": 2
+      }
+    }
+  }
+}

@@ -1,0 +1,96 @@
+{
+  "bitsail": {
+    "job": {
+      "common": {
+        "job_type": "STREAMING",
+        "job_name": "cdc_binlog_to_hdfs",
+        "job_plugin_lib_dir": "",
+        "enable_dynamic_loader": false,
+        "job_plugin_conf_dir": "",
+        "job_id": -1,
+        "sync_ddl": false,
+        "dry_run": true,
+        "checkpoint_enable": true,
+        "checkpoint_interval": 300000,
+        "multi_source_enable": true,
+        "has_transform": true
+      },
+      "reader": {
+        "format_type": "streaming_file",
+        "reader_conf_list": [
+          {
+            "job.reader.connector": {
+              "cdc": {
+                "startup-mode": "latest-offset",
+                "server-id": 5401
+              },
+              "hostname": "10.68.98.181",
+              "port": 3306,
+              "username": "opr",
+              "password": "Push@2021",
+              "database-name": "dop",
+              "table-name": "dop.tb_push_register_[0-9]"
+            },
+            "job.reader.class": "com.bytedance.bitsail.connector.legacy.jdbc.cdc.source.MysqlBinlogSourceFunctionDAGBuilder",
+            "job.reader.transformer_class": "com.hihonor.datacollector.realtime.transform.MysqlBinlogTransformDAGBuilder"
+          },
+          {
+            "job.reader.connector": {
+              "cdc": {
+                "startup-mode": "latest-offset",
+                "server-id": 5403
+              },
+              "hostname": "10.68.99.133",
+              "port": 3306,
+              "username": "root",
+              "password": "Push@2021",
+              "database-name": "dop",
+              "table-name": "dop.tb_push_register_[0-9]"
+            },
+            "job.reader.class": "com.bytedance.bitsail.connector.legacy.jdbc.cdc.source.MysqlBinlogSourceFunctionDAGBuilder",
+            "job.reader.transformer_class": "com.hihonor.datacollector.realtime.transform.MysqlBinlogTransformDAGBuilder"
+          },
+          {
+            "job.reader.connector": {
+              "cdc": {
+                "startup-mode": "latest-offset",
+                "server-id": 5402
+              },
+              "hostname": "10.68.96.104",
+              "port": 3306,
+              "username": "opr",
+              "password": "Push@2021",
+              "database-name": "dop",
+              "table-name": "dop.tb_push_register_[0-9]"
+            },
+            "job.reader.class": "com.bytedance.bitsail.connector.legacy.jdbc.cdc.source.MysqlBinlogSourceFunctionDAGBuilder",
+            "job.reader.transformer_class": "com.hihonor.datacollector.realtime.transform.MysqlBinlogTransformDAGBuilder"
+          }
+        ],
+        "metric_tag_name": "binlog",
+        "class": "com.bytedance.bitsail.connector.legacy.jdbc.cdc.source.MysqlBinlogSourceFunctionDAGBuilder"
+      },
+      "writer": {
+        "hdfs": {
+          "replication": 1,
+          "dump_type": "hdfs.dump_type.text",
+          "compression_codec": "none"
+        },
+        "dump": {
+          "output_dir": "file:///tmp/streaming_file_hdfs/",
+          "format": {
+            "type": "hdfs"
+          },
+          "directory_frequency": "dump.directory_frequency.hour"
+        },
+        "class": "com.bytedance.bitsail.connector.legacy.streamingfile.sink.FileSystemSinkFunctionDAGBuilder",
+        "partition_infos": "[{\"name\":\"tb\",\"type\":\"DYNAMIC\"},{\"name\":\"pt_d\",\"type\":\"TIME\"},{\"name\":\"pt_h\",\"type\":\"TIME\"}]",
+        "enable_event_time": true,
+        "custom_extractor_classpath": "com.bytedance.bitsail.connector.legacy.streamingfile.common.extractor.DataCollectorEncryptEventTimeExtractor",
+        "mq_offset_check": false,
+        "event_time_fields": "ts_ms",
+        "event_time_index": 15
+      }
+    }
+  }
+}
